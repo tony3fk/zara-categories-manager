@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { ZoomConfig } from "../types/category";
+import { ZoomConfig } from "@/types/category";
 
 const DEFAULT_CONFIG: ZoomConfig = {
   scale: 1,

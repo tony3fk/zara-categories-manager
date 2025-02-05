@@ -1,12 +1,12 @@
 import React from "react";
 import styled from "styled-components";
-import AddProduct from "./AddProduct";
-import Row from "./Row";
-import ZoomControls from "./ZoomControls";
-import Logo from "./Logo";
-import { useCategory } from "../context/CategoryContext";
-import { useZoom } from "../hooks/useZoom";
-import { Product } from "../types/category";
+import AddProduct from "@/components/AddProduct";
+import Row from "@/components/Row";
+import ZoomControls from "@/components/ZoomControls";
+import Logo from "@/components/Logo";
+import { useCategory } from "@/context/CategoryContext";
+import { useZoom } from "@/hooks/useZoom";
+import { Product } from "@/types/category";
 
 const EDITOR_WIDTH = 1000; // Mismo ancho que las filas
 const SIDEBAR_WIDTH = 280; // Ancho del panel de productos
@@ -84,6 +84,7 @@ const CategoryEditor: React.FC = () => {
   const {
     rows,
     templates,
+    selectedRowId,
     addRow,
     addRowWithProduct,
     removeRow,
@@ -92,6 +93,7 @@ const CategoryEditor: React.FC = () => {
     removeProduct,
     updateTemplate,
     addProduct,
+    selectRow,
   } = useCategory();
 
   const { scale, zoomIn, zoomOut, resetZoom } = useZoom();
@@ -99,6 +101,11 @@ const CategoryEditor: React.FC = () => {
   const handleAddProduct = (product: Product) => {
     if (rows.length === 0) {
       addRowWithProduct(product);
+    } else if (selectedRowId) {
+      const selectedRow = rows.find((row) => row.id === selectedRowId);
+      if (selectedRow && selectedRow.products.length < 3) {
+        addProduct(selectedRowId, product);
+      }
     } else {
       const lastRow = rows[rows.length - 1];
       if (lastRow.products.length < 3) {
@@ -110,7 +117,7 @@ const CategoryEditor: React.FC = () => {
   return (
     <Container>
       <Logo />
-      <AddRowButton onClick={addRow} title="Add new row">
+      <AddRowButton onClick={addRow} title="Añadir nueva fila">
         <AddIcon />
       </AddRowButton>
       <Header>
@@ -126,6 +133,8 @@ const CategoryEditor: React.FC = () => {
             row={row}
             index={index}
             templates={templates}
+            isSelected={row.id === selectedRowId}
+            onSelect={() => selectRow(row.id === selectedRowId ? null : row.id)}
             onMoveProduct={moveProduct}
             onRemoveProduct={removeProduct}
             onUpdateTemplate={updateTemplate}

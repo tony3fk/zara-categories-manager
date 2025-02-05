@@ -1,14 +1,16 @@
 import { createContext, useContext, useReducer, ReactNode } from "react";
-import { CategoryRow, Product, Template } from "../types/category";
+import { CategoryRow, Product, Template } from "@/types/category";
 
 interface CategoryState {
   rows: CategoryRow[];
   templates: Template[];
+  selectedRowId: string | null;
 }
 
 type CategoryContextType = {
   rows: CategoryRow[];
   templates: Template[];
+  selectedRowId: string | null;
   addRow: () => string;
   addRowWithProduct: (product: Product) => string;
   removeRow: (id: string) => void;
@@ -22,6 +24,7 @@ type CategoryContextType = {
     toIndex: number
   ) => void;
   updateTemplate: (rowId: string, template: Template) => void;
+  selectRow: (id: string | null) => void;
 };
 
 type CategoryAction =
@@ -31,6 +34,7 @@ type CategoryAction =
   | { type: "MOVE_ROW"; payload: { fromIndex: number; toIndex: number } }
   | { type: "ADD_PRODUCT"; payload: { rowId: string; product: Product } }
   | { type: "REMOVE_PRODUCT"; payload: { rowId: string; productId: string } }
+  | { type: "SELECT_ROW"; payload: { id: string | null } }
   | {
       type: "MOVE_PRODUCT";
       payload: {
@@ -51,6 +55,7 @@ const defaultTemplates: Template[] = [
 const initialState: CategoryState = {
   rows: [],
   templates: defaultTemplates,
+  selectedRowId: null,
 };
 
 const CategoryContext = createContext<CategoryContextType>(null!);
@@ -73,6 +78,7 @@ function categoryReducer(
             order: state.rows.length,
           },
         ],
+        selectedRowId: newId,
       };
     }
 
@@ -89,6 +95,7 @@ function categoryReducer(
             order: state.rows.length,
           },
         ],
+        selectedRowId: id,
       };
     }
 
@@ -142,31 +149,61 @@ function categoryReducer(
       };
     }
 
+    case "SELECT_ROW":
+      return {
+        ...state,
+        selectedRowId: action.payload.id,
+      };
+
     case "MOVE_PRODUCT": {
       const { fromRowId, toRowId, fromIndex, toIndex } = action.payload;
+      const fromRow = state.rows.find((r) => r.id === fromRowId);
+      const toRow = state.rows.find((r) => r.id === toRowId);
+
+      if (!fromRow || !toRow) return state;
+
       const newRows = state.rows.map((row) => {
         if (row.id === fromRowId) {
           const newProducts = [...row.products];
           const [movedProduct] = newProducts.splice(fromIndex, 1);
+
           if (fromRowId === toRowId) {
             newProducts.splice(toIndex, 0, movedProduct);
+          } else if (toRow.products.length === 3) {
+            // Si la fila destino tiene 3 productos, intercambiamos
+            const targetProduct = toRow.products[toIndex];
+            newProducts.splice(fromIndex, 0, {
+              ...targetProduct,
+              id: crypto.randomUUID(),
+            });
           }
+
           return { ...row, products: newProducts };
         }
+
         if (row.id === toRowId && fromRowId !== toRowId) {
           const newProducts = [...row.products];
-          const movedProduct = state.rows.find((r) => r.id === fromRowId)
-            ?.products[fromIndex];
-          if (movedProduct && newProducts.length < 3) {
+          const movedProduct = fromRow.products[fromIndex];
+
+          if (newProducts.length === 3) {
+            // Si tenemos 3 productos, reemplazamos el producto en la posición objetivo
+            newProducts.splice(toIndex, 1, {
+              ...movedProduct,
+              id: crypto.randomUUID(),
+            });
+            return { ...row, products: newProducts };
+          } else if (newProducts.length < 3) {
+            // Si tenemos menos de 3 productos, añadimos normalmente
             newProducts.splice(toIndex, 0, {
               ...movedProduct,
               id: crypto.randomUUID(),
             });
+            return { ...row, products: newProducts };
           }
-          return { ...row, products: newProducts };
         }
         return row;
       });
+
       return { ...state, rows: newRows };
     }
 
@@ -185,12 +222,15 @@ function categoryReducer(
   }
 }
 
-export function CategoryProvider({ children }: { children: ReactNode }) {
+export function CategoryProvider({
+  children,
+}: Readonly<{ children: ReactNode }>) {
   const [state, dispatch] = useReducer(categoryReducer, initialState);
 
   const value: CategoryContextType = {
     rows: state.rows,
     templates: state.templates,
+    selectedRowId: state.selectedRowId,
     addRow: () => {
       const newId = crypto.randomUUID();
       dispatch({ type: "ADD_ROW", payload: { id: newId } });
@@ -224,6 +264,8 @@ export function CategoryProvider({ children }: { children: ReactNode }) {
       }),
     updateTemplate: (rowId: string, template: Template) =>
       dispatch({ type: "UPDATE_TEMPLATE", payload: { rowId, template } }),
+    selectRow: (id: string | null) =>
+      dispatch({ type: "SELECT_ROW", payload: { id } }),
   };
 
   return (

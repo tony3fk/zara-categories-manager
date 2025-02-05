@@ -1,13 +1,26 @@
 import React from "react";
 import styled from "styled-components";
 import { useDrop, useDrag } from "react-dnd";
-import { CategoryRow, Template } from "../types/category";
-import ProductCard from "./ProductCard";
+import { CategoryRow, Template } from "@/types/category";
+import ProductCard from "@/components/ProductCard";
+import {
+  CONTAINER_WIDTH,
+  PRODUCT_GAP,
+  PRODUCT_WIDTH,
+} from "@/constants/constants";
+import {
+  AlignCenterIcon,
+  AlignLeftIcon,
+  AlignRightIcon,
+  TrashIcon,
+} from "@/assets/icons/icons";
 
 interface RowProps {
   row: CategoryRow;
   index: number;
   templates: Template[];
+  isSelected: boolean;
+  onSelect: () => void;
   onMoveProduct: (
     fromRowId: string,
     toRowId: string,
@@ -20,11 +33,11 @@ interface RowProps {
   onMoveRow: (fromIndex: number, toIndex: number) => void;
 }
 
-const CONTAINER_WIDTH = 1000;
-const PRODUCT_GAP = 20;
-const PRODUCT_WIDTH = (CONTAINER_WIDTH - 40 - PRODUCT_GAP * 2) / 3;
-
-const Container = styled.div<{ alignment: string; isDragging: boolean }>`
+const Container = styled.div<{
+  alignment: string;
+  isDragging: boolean;
+  isSelected: boolean;
+}>`
   margin: 20px 0;
   padding: 20px;
   background: white;
@@ -32,9 +45,15 @@ const Container = styled.div<{ alignment: string; isDragging: boolean }>`
   position: relative;
   opacity: ${(props) => (props.isDragging ? 0.9 : 1)};
   cursor: move;
-  border: 2px solid ${(props) => (props.isDragging ? "#4a90e2" : "transparent")};
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-  transform: translateY(0);
+  border: 2px solid transparent;
+  box-shadow: ${(props) =>
+    props.isSelected
+      ? "0 15px 35px rgba(0, 0, 0, 0.5)"
+      : props.isDragging
+      ? "0 10px 20px rgba(0, 0, 0, 0.1)"
+      : "0 10px 20px rgba(0, 0, 0, 0.1)"};
+  transform: ${(props) =>
+    props.isSelected ? "translateY(-4px)" : "translateY(0)"};
   transition: all 0.3s ease;
   width: ${CONTAINER_WIDTH}px;
 
@@ -46,7 +65,8 @@ const Container = styled.div<{ alignment: string; isDragging: boolean }>`
   .products-container {
     display: flex;
     gap: ${PRODUCT_GAP}px;
-    min-height: 300px;
+    height: 400px;
+    min-height: 400px;
     justify-content: ${(props) => {
       switch (props.alignment) {
         case "left":
@@ -60,6 +80,10 @@ const Container = styled.div<{ alignment: string; isDragging: boolean }>`
       }
     }};
     position: relative;
+    background: ${(props) =>
+      props.isSelected ? "rgba(74, 144, 226, 0.02)" : "transparent"};
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
   }
 `;
 
@@ -205,34 +229,12 @@ const DropIndicator = styled.div<{ isVisible: boolean; left: number }>`
   }
 `;
 
-const AlignLeftIcon = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor">
-    <path d="M3 3h18v2H3zm0 8h12v2H3zm0 8h18v2H3z" />
-  </svg>
-);
-
-const AlignCenterIcon = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor">
-    <path d="M3 3h18v2H3zm3 8h12v2H6zm-3 8h18v2H3z" />
-  </svg>
-);
-
-const AlignRightIcon = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor">
-    <path d="M3 3h18v2H3zm6 8h12v2H9zm-6 8h18v2H3z" />
-  </svg>
-);
-
-const TrashIcon = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor">
-    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
-  </svg>
-);
-
 const Row: React.FC<RowProps> = ({
   row,
   index,
   templates,
+  isSelected,
+  onSelect,
   onMoveProduct,
   onRemoveProduct,
   onUpdateTemplate,
@@ -311,6 +313,8 @@ const Row: React.FC<RowProps> = ({
       ref={(node) => drag(drop(node))}
       alignment={row.template.alignment}
       isDragging={isDragging}
+      isSelected={isSelected}
+      onClick={onSelect}
     >
       <DragHandle />
       <Controls>

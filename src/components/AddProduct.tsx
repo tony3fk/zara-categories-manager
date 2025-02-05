@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { Product } from "../types/category";
-import { mockProducts } from "../utils/mockData";
+import { Product } from "@/types/category";
+import { mockProducts } from "@/utils/mockData";
 
 interface AddProductProps {
   onAdd: (product: Product) => void;

@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { useDrag } from "react-dnd";
-import { Product } from "../types/category";
+import { Product } from "@/types/category";
 
 interface ProductCardProps {
   product: Product;
