@@ -117,17 +117,27 @@ The application will be available at `http://localhost:5173`
 
 ```
 src/
-  ├── components/          # React components
-  │   ├── AddProduct/     # Product selection panel
-  │   ├── Logo/           # ZARA logo component
-  │   ├── Row/            # Row management
-  │   └── ZoomControls/   # Zoom functionality
-  ├── context/            # React Context for state
-  ├── hooks/              # Custom React hooks
-  ├── styles/             # Global styles
-  ├── types/              # TypeScript types
-  ├── utils/              # Utilities and helpers
-  └── __tests__/         # Test files
+  ├── assets/             # Static assets and resources
+  │   └── icons/         # Application SVG icons
+  ├── components/         # React components
+  │   ├── AddProduct/    # Product selection panel
+  │   │   ├── AddProduct.tsx
+  │   │   └── AddProduct.test.tsx
+  │   ├── CategoryEditor/ # Main category editor
+  │   ├── Logo/          # Logo component
+  │   ├── ProductCard/   # Product card component
+  │   ├── Row/           # Row management
+  │   └── ZoomControls/  # Zoom controls
+  ├── constants/         # Constants and configuration
+  ├── context/          # React contexts
+  │   └── CategoryContext.tsx
+  ├── hooks/            # Custom React hooks
+  │   ├── useZoom.ts
+  │   └── useZoom.test.ts
+  ├── types/            # TypeScript type definitions
+  │   └── category.ts
+  └── utils/            # Utilities and helpers
+      └── mockData.ts
 ```
 
 ## Testing
