@@ -28,7 +28,7 @@ const Title = styled.h3`
   font-weight: 300;
 `;
 
-const ProductList = styled.div`
+const ProductList = styled.div.attrs({ className: "product-list" })`
   flex: 1;
   overflow-y: auto;
   margin: 0 -16px;
@@ -104,7 +104,11 @@ const AddProduct: React.FC<AddProductProps> = ({ onAdd }) => {
       <Title>Add Product</Title>
       <ProductList>
         {products.map((product) => (
-          <ProductItem key={product.id} onClick={() => onAdd(product)}>
+          <ProductItem
+            key={product.id}
+            onClick={() => onAdd(product)}
+            data-testid="product-item"
+          >
             <ProductImage src={product.imageUrl} alt={product.name} />
             <ProductInfo>
               <ProductName>{product.name}</ProductName>

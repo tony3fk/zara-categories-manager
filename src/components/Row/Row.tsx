@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { useDrop, useDrag } from "react-dnd";
 import { CategoryRow, Template } from "@/types/category";
-import ProductCard from "@/components/ProductCard";
+import ProductCard from "@/components/ProductCard/ProductCard";
 import {
   CONTAINER_WIDTH,
   PRODUCT_GAP,
@@ -48,7 +48,7 @@ const Container = styled.div<{
   border: 2px solid transparent;
   box-shadow: ${(props) =>
     props.isSelected
-      ? "0 15px 35px rgba(0, 0, 0, 0.5)"
+      ? "0 15px 35px rgba(0, 0, 0, 0.2)"
       : props.isDragging
       ? "0 10px 20px rgba(0, 0, 0, 0.1)"
       : "0 10px 20px rgba(0, 0, 0, 0.1)"};
@@ -315,6 +315,7 @@ const Row: React.FC<RowProps> = ({
       isDragging={isDragging}
       isSelected={isSelected}
       onClick={onSelect}
+      data-testid="row-container"
     >
       <DragHandle />
       <Controls>
@@ -347,6 +348,7 @@ const Row: React.FC<RowProps> = ({
         className="products-container"
         ref={productDrop}
         id={`product-container-${row.id}`}
+        data-testid="products-container"
       >
         {row.products.map((product, productIndex) => (
           <ProductWrapper key={product.id} width={PRODUCT_WIDTH}>

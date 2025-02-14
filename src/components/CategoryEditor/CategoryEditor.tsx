@@ -1,12 +1,12 @@
 import React from "react";
 import styled from "styled-components";
-import AddProduct from "@/components/AddProduct";
-import Row from "@/components/Row";
-import ZoomControls from "@/components/ZoomControls";
-import Logo from "@/components/Logo";
+import Logo from "@/components/Logo/Logo";
 import { useCategory } from "@/context/CategoryContext";
 import { useZoom } from "@/hooks/useZoom";
 import { Product } from "@/types/category";
+import AddProduct from "@/components/AddProduct/AddProduct";
+import ZoomControls from "@/components/ZoomControls/ZoomControls";
+import Row from "@/components/Row/Row";
 
 const EDITOR_WIDTH = 1000; // Mismo ancho que las filas
 const SIDEBAR_WIDTH = 280; // Ancho del panel de productos
