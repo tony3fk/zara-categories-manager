@@ -26,10 +26,17 @@ A modern web application for managing ZARA.COM product categories, allowing flex
   - Responsive product cards with hover effects
 
 - **User Experience**:
+
   - Intuitive product selection panel
   - Visual feedback for all interactions
   - Smooth animations and transitions
   - Clear alignment controls with icons
+
+- **Testing**:
+  - Comprehensive unit tests with Jest and React Testing Library
+  - Component-level testing with styled-components support
+  - Mock implementations for drag and drop functionality
+  - Visual style testing for hover states and transitions
 
 ## Technologies Used
 
@@ -38,6 +45,8 @@ A modern web application for managing ZARA.COM product categories, allowing flex
 - Styled Components
 - React DnD (Drag and Drop)
 - Context API for state management
+- Jest + React Testing Library
+- jest-styled-components
 
 ## Requirements
 
@@ -63,6 +72,12 @@ npm install
 
 ```bash
 npm run dev
+```
+
+4. Run the tests:
+
+```bash
+npm test
 ```
 
 The application will be available at `http://localhost:5173`
@@ -111,7 +126,24 @@ src/
   ├── hooks/              # Custom React hooks
   ├── styles/             # Global styles
   ├── types/              # TypeScript types
-  └── utils/              # Utilities and helpers
+  ├── utils/              # Utilities and helpers
+  └── __tests__/         # Test files
+```
+
+## Testing
+
+The project includes comprehensive testing:
+
+- **Unit Tests**: Testing individual components and hooks
+- **Integration Tests**: Testing component interactions
+- **Style Tests**: Testing styled-components and visual states
+- **Mock Tests**: Testing drag and drop functionality
+
+Run tests with:
+
+```bash
+npm test               # Run all tests
+npm run test:watch    # Run tests in watch mode
 ```
 
 ## Technical Decisions
@@ -122,6 +154,8 @@ src/
 4. **React DnD**: Robust drag and drop functionality
 5. **Context API**: Simple and effective state management
 6. **Fixed Width Layout**: Consistent product display regardless of content
+7. **Jest + RTL**: Comprehensive testing solution
+8. **jest-styled-components**: Advanced style testing capabilities
 
 ## Component Architecture
 
@@ -141,10 +175,11 @@ src/
 - [ ] Category preview mode
 - [ ] Configuration import/export
 - [ ] Dark mode support
-- [ ] Unit and integration tests
+- [x] Unit and integration tests
 - [ ] Keyboard navigation
 - [ ] Multi-language support
 - [ ] Performance optimizations for large catalogs
+- [ ] E2E testing with Cypress or Playwright
 
 ## Contributing
 
